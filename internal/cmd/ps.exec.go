@@ -36,7 +36,7 @@ func (p *Proc) getCMD() string {
 }
 
 func (p *Proc) getArgsBase() string {
-	return fmt.Sprintf("%s %s:%s com.google.tsunami.main.cli.TsunamiCli", p.classpath, p.jarName, p.pluginPath)
+	return fmt.Sprintf("%s \"%s:%s\" com.google.tsunami.main.cli.TsunamiCli", p.classpath, p.jarName, p.pluginPath)
 }
 
 func (p *Proc) getOutputType() string {
