@@ -36,7 +36,7 @@ func (p *Proc) getCMD() string {
 }
 
 func (p *Proc) getArgsBase() string {
-	return fmt.Sprintf("%s \"%s:%s\" com.google.tsunami.main.cli.TsunamiCli", p.classpath, p.jarName, p.pluginPath)
+	return fmt.Sprintf("%s \"%s:%s\" com.google.tsunami.main.cli.TsunamiCli -Dtsunami-config.location=/home/c-tsunami/tsunami/tsunami.yaml", p.classpath, p.jarName, p.pluginPath)
 }
 
 func (p *Proc) getOutputType() string {
@@ -80,7 +80,7 @@ func (p *Proc) RunScan(cArgs ...string) (string, error) {
 	for _, v := range cArgs {
 		args += " " + v
 	}
-
+	log.Infof("%s", fmt.Sprintf(args))
 	ps := exec.Command(p.getCMD(), args)
 
 	var out, er bytes.Buffer
