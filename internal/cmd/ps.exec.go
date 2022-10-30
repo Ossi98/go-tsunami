@@ -21,7 +21,7 @@ type Proc struct {
 
 func NewProcessScan(v *viper.Viper) *Proc {
 	return &Proc{
-		cmdName:    "java", //fmt.Sprintf("%v", v.GetString("cmd.tsunami."))
+		cmdName:    "/usr/bin/java", //fmt.Sprintf("%v", v.GetString("cmd.tsunami."))
 		classpath:  "-cp",
 		psPath:     fmt.Sprintf("%v", v.GetString("cmd.tsunami.path")),
 		pluginPath: fmt.Sprintf("%v", v.GetString("cmd.tsunami.plugin")) + "/*",
