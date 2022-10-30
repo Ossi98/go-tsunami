@@ -59,11 +59,10 @@ func (p *Proc) ScanType(typeScan string) (string, error) {
 		return HostnameTarget, nil
 	case "uri":
 		return UriTarget, nil
-
-		/*default:
-		return "", errors.New("no target scan match")*/
+	default:
+		return "", errors.New("no target scan match")
 	}
-	return "", errors.New("no target scan match")
+
 }
 
 func (p *Proc) MakeCmdLine(typeScan, target string) []string {
