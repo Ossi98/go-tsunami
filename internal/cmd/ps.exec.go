@@ -83,12 +83,14 @@ func (p *Proc) RunScan(cArgs ...string) (string, error) {
 
 	ps := exec.Command(p.getCMD(), args)
 
-	var out bytes.Buffer
+	var out, er bytes.Buffer
+
 	ps.Stdout = &out
+	ps.Stderr = &er
 
 	err := ps.Run()
 	if err != nil {
-		errors.New(fmt.Sprintf(" process error, err=%v", err))
+		errors.New(fmt.Sprintf(" process error, err=%v", er.String()))
 		return "", err
 	}
 
