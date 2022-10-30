@@ -50,9 +50,9 @@ func (p *Proc) getOutputFile() string {
 func (p *Proc) ScanType(typeScan string) (string, error) {
 
 	switch typeScan {
-	case "ip-v4":
+	case "ipv4":
 		return IpV4Target, nil
-	case "ip-v6":
+	case "ipv6":
 		return IpV6Target, nil
 	case "hostname":
 		return HostnameTarget, nil
