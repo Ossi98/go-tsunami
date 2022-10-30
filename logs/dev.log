@@ -1,0 +1,7 @@
+time="2022-10-30T20:53:24+01:00" level=info msg="test=0xc000492110"
+time="2022-10-30T20:53:24+01:00" level=info msg="test="
+time="2022-10-30T20:53:24+01:00" level=error msg="can not exec scan, err= no target scan match"
+time="2022-10-30T20:54:44+01:00" level=info msg="test={ }"
+time="2022-10-30T20:54:44+01:00" level=info msg="test="
+time="2022-10-30T20:54:44+01:00" level=error msg="can not exec scan, err= no target scan match"
+time="2022-10-30T20:56:53+01:00" level=error msg="exit status 1"

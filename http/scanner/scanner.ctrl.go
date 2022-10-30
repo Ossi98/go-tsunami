@@ -20,8 +20,8 @@ func NewScannerCtrl(ps *cmd.Proc) *Scanner {
 }
 
 type ScanRequest struct {
-	target     string `json:"target" binding:"required"` // verify if address valid in case of ipv4,6 or domain in case of hostname or uri
-	typeTarget string `json:"type" binding:"required"`
+	Target     string `json:"target" binding:"required"` // verify if address valid in case of ipv4,6 or domain in case of hostname or uri
+	TypeTarget string `json:"type" binding:"required"`
 }
 
 func (s *Scanner) StartScan(c *gin.Context) {
@@ -31,9 +31,7 @@ func (s *Scanner) StartScan(c *gin.Context) {
 		validator.HttpValidationError(c, err)
 	}
 
-	log.Infof("test=%v", sr)
-
-	st, err := s.psExec.ScanType(sr.typeTarget)
+	st, err := s.psExec.ScanType(sr.TypeTarget)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, map[string]any{
 			"error":   true,
@@ -44,7 +42,7 @@ func (s *Scanner) StartScan(c *gin.Context) {
 		return
 	}
 
-	args := s.psExec.MakeCmdLine(st, sr.target)
+	args := s.psExec.MakeCmdLine(st, sr.Target)
 
 	output, err := s.psExec.RunScan(args...)
 	if err != nil {
@@ -55,6 +53,7 @@ func (s *Scanner) StartScan(c *gin.Context) {
 		})
 
 		log.Errorf("%v", err)
+		return
 	}
 
 	c.JSON(http.StatusOK, map[string]string{

@@ -48,8 +48,6 @@ func (p *Proc) getOutputFile() string {
 }
 
 func (p *Proc) ScanType(typeScan string) (string, error) {
-	log.Infof("test=%s", typeScan)
-
 	switch typeScan {
 	case "ipv4":
 		return IpV4Target, nil
