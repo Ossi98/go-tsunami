@@ -6,3 +6,8 @@ internal/config/development.yaml
 # Logs
 
 # Binary
+
+# Others
+todo.txt
+# tsunami cli params
+cli-tsunami.txt

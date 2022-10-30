@@ -23,8 +23,6 @@ func main() {
 	// Viper Config
 	c := config.NewConfig(env)
 
-	//log.Info(fmt.Sprintf("%v", c.GetStringMap("api")["port"]))
-
 	// Gin Engine and Config
 	var e *gin.Engine
 
