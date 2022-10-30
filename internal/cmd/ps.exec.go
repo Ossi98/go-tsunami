@@ -99,8 +99,8 @@ func (p *Proc) RunScan(cArgs ...string) (string, error) {
 
 	err := ps.Run()
 	if err != nil {
-		errors.New(fmt.Sprintf(" process error, err=%v", er.String()))
-		return "", err
+
+		return "", errors.New(fmt.Sprintf(" process error, Stderr=%v, err=%v", er.String(), err))
 	}
 
 	//notify the interface with a websocket to preform get results of scan
