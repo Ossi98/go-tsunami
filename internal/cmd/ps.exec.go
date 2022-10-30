@@ -48,6 +48,7 @@ func (p *Proc) getOutputFile() string {
 }
 
 func (p *Proc) ScanType(typeScan string) (string, error) {
+	log.Infof("test=%s", typeScan)
 
 	switch typeScan {
 	case "ipv4":
@@ -59,9 +60,10 @@ func (p *Proc) ScanType(typeScan string) (string, error) {
 	case "uri":
 		return UriTarget, nil
 
-	default:
-		return "", errors.New("no target scan match")
+		/*default:
+		return "", errors.New("no target scan match")*/
 	}
+	return "", errors.New("no target scan match")
 }
 
 func (p *Proc) MakeCmdLine(typeScan, target string) []string {
