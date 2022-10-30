@@ -1,0 +1,8 @@
+# Node artifact files
+vendor
+.idea
+bin/
+internal/config/development.yaml
+# Logs
+
+# Binary
