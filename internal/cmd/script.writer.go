@@ -12,7 +12,7 @@ const (
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	length = 10
 
-	procDir = "./proc/"
+	procDir = "proc/"
 
 	shell = "#!/bin/bash"
 )
