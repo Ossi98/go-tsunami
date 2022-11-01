@@ -90,7 +90,8 @@ func (p *Proc) RunScan(cArgs ...string) (string, error) {
 		"--scan-results-local-output-format=JSON",
 		"--scan-results-local-output-filename=/home/c-tsunami/tsunami/tsunami-output.json",
 	)*/
-	ps := exec.Command("./script-tsunami.sh")
+	//ps := exec.Command("./script-tsunami.sh")
+	ps := exec.Command("bash", "java -cp \"/home/c-tsunami/tsunami/tsunami-main-0.0.15-SNAPSHOT-cli.jar:/home/c-tsunami/tsunami/plugins/*\" com.google.tsunami.main.cli.TsunamiCli --ip-v4-target=127.0.0.1 --scan-results-local-output-format=JSON --scan-results-local-output-filename=/home/c-tsunami/tsunami/tsunami-output.json")
 
 	var out, er bytes.Buffer
 
@@ -98,6 +99,7 @@ func (p *Proc) RunScan(cArgs ...string) (string, error) {
 	ps.Stderr = &er
 
 	err := ps.Run()
+	//err := ps.Start()
 	if err != nil {
 
 		return "", errors.New(fmt.Sprintf(" process error, Stderr=%v, err=%v", er.String(), err))
