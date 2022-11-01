@@ -81,5 +81,6 @@ func routes(e *gin.Engine, c *viper.Viper) {
 	//Routes
 	router.GET("/health", hc.Index)
 	router.POST("/scanner/start", sc.StartScan)
+	router.GET("/scanner/:id", sc.ReadScanFile)
 
 }

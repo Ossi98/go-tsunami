@@ -19,13 +19,13 @@ func NewScannerCtrl(ps *cmd.Proc) *Scanner {
 	}
 }
 
-type ScanRequest struct {
+type scanRequest struct {
 	Target     string `json:"target" binding:"required"` // verify if address valid in case of ipv4,6 or domain in case of hostname or uri
 	TypeTarget string `json:"type" binding:"required"`
 }
 
 func (s *Scanner) StartScan(c *gin.Context) {
-	var sr = &ScanRequest{}
+	var sr = &scanRequest{}
 
 	if err := c.ShouldBindJSON(sr); err != nil {
 		validator.HttpValidationError(c, err)
@@ -58,6 +58,24 @@ func (s *Scanner) StartScan(c *gin.Context) {
 
 	c.JSON(http.StatusOK, map[string]string{
 		"id": output,
+	})
+	return
+}
+
+type scanReadURI struct {
+	Id string `uri:"id" binding:"required"`
+}
+
+func (s *Scanner) ReadScanFile(c *gin.Context) {
+	var uri = &scanReadURI{}
+
+	if err := c.ShouldBindUri(uri); err != nil {
+		log.Errorf("uri error %s", err)
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]string{
+		"id": uri.Id,
 	})
 	return
 }
