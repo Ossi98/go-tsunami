@@ -103,7 +103,6 @@ func (s *Scanner) ReadScanFile(c *gin.Context) {
 	}
 
 	echo.Wait()
-	log.Println(out.String())
 
 	strOut := strings.Split(out.String(), "\n")
 
@@ -120,7 +119,7 @@ func (s *Scanner) ReadScanFile(c *gin.Context) {
 		return
 	}
 
-	log.Info("Successfully Opened users.json")
+	log.Infof("Successfully Opened %s.json", uri.Id)
 
 	// defer the closing of our jsonFile so that we can parse it later on
 	defer jsonFile.Close()
