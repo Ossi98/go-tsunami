@@ -89,7 +89,7 @@ func (s *Scanner) ReadScanFile(c *gin.Context) {
 
 	//log.Info(str[0])
 	// Open our jsonFile
-	echo := exec.Command("echo $HOME")
+	echo := exec.Command("bash", "echo $HOME")
 	var out, er bytes.Buffer
 
 	echo.Stdout = &out
@@ -103,6 +103,7 @@ func (s *Scanner) ReadScanFile(c *gin.Context) {
 			"message": fmt.Sprintf("%v", err),
 		})
 		log.Errorf("process error, Stderr=%v, err=%v", er.String(), err)
+		return
 	}
 
 	echo.Wait()
