@@ -37,7 +37,11 @@ func (p *Proc) getCMD() string {
 }
 
 func (p *Proc) getArgsBase() string {
-	return fmt.Sprintf("%s \"%s:%s\" com.google.tsunami.main.cli.TsunamiCli", p.classpath, p.jarName, p.pluginPath) //-Dtsunami-config.location=/home/c-tsunami/tsunami/tsunami.yaml
+	return fmt.Sprintf("%s \"%s:%s\" com.google.tsunami.main.cli.TsunamiCli",
+		p.classpath,
+		p.jarName,
+		p.pluginPath,
+	) //-Dtsunami-config.location=/home/c-tsunami/tsunami/tsunami.yaml
 }
 
 func (p *Proc) getOutputType() string {
@@ -77,25 +81,28 @@ func (p *Proc) RunScan(typeScan, target string) (string, error) {
 
 	writer := NewScriptW()
 
-	fName, err := writer.Create()
+	/*fName, err := writer.Create()
 	if err != nil {
 		return "", err
-	}
+	}*/
 
 	var cmd = make([]string, 2, 4)
 
 	cmdName := p.cmdName
 	classpathArgs := p.getArgsBase()
 	targetArg := p.scanTarget(typeScan, target)
-	output := ScanResOutputFormat + "=" + p.outputType + " " + ScanResOutputFilename + "=" + p.outputFile + fName + ".json"
+	output := ScanResOutputFormat + "=" + p.outputType + " " + ScanResOutputFilename + "=" + p.outputFile //+ fName + ".json"
 
 	cmd = append(cmd, cmdName, classpathArgs, targetArg, output)
 
 	command := p.makeCmdLineDynPt(cmd)
-
-	if err := writer.Write(command); err != nil {
+	fName, err := writer.CreateAndWrite(command) //fName, err := writer.Create()
+	if err != nil {
 		return "", err
 	}
+	/*if err := writer.Write(command); err != nil {
+		return "", err
+	}*/
 
 	ps := exec.Command("./proc/" + fName)
 
