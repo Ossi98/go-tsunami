@@ -3,19 +3,25 @@ package scanner
 import (
 	"Ossi98/go-tsunami/internal/cmd"
 	"Ossi98/go-tsunami/internal/utils/validator"
+	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
+	"io/ioutil"
 	"net/http"
+	"os"
 )
 
 type Scanner struct {
 	psExec *cmd.Proc
+	viper  *viper.Viper
 }
 
-func NewScannerCtrl(ps *cmd.Proc) *Scanner {
+func NewScannerCtrl(ps *cmd.Proc, vp *viper.Viper) *Scanner {
 	return &Scanner{
 		psExec: ps,
+		viper:  vp,
 	}
 }
 
@@ -74,8 +80,35 @@ func (s *Scanner) ReadScanFile(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, map[string]string{
+	// Open our jsonFile
+	jsonFile, err := os.Open(viper.GetString("cmd.tsunami.path") + uri.Id + ".json")
+
+	// if we os.Open returns an error then handle it
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, map[string]any{
+			"error":   true,
+			"status":  500,
+			"message": fmt.Sprintf("%v", err),
+		})
+		log.Errorf("can not open file, err=%v", err)
+		return
+	}
+
+	log.Info("Successfully Opened users.json")
+
+	// defer the closing of our jsonFile so that we can parse it later on
+	defer jsonFile.Close()
+
+	byteValue, _ := ioutil.ReadAll(jsonFile)
+
+	var result map[string]interface{}
+	json.Unmarshal(byteValue, &result)
+
+	fmt.Println(result)
+
+	c.Data(http.StatusOK, "application/json", byteValue)
+	/*c.JSON(http.StatusOK, map[string]string{
 		"id": uri.Id,
-	})
+	})*/
 	return
 }

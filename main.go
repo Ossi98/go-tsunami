@@ -73,7 +73,7 @@ func routes(e *gin.Engine, c *viper.Viper) {
 
 	// Controller
 	hc := health.NewHealthCtrl()
-	sc := scanner.NewScannerCtrl(ps)
+	sc := scanner.NewScannerCtrl(ps, c)
 
 	// Router
 	router := http.NewRouter(e, c)
