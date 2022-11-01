@@ -12,7 +12,7 @@ const (
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	length = 10
 
-	procDir = "/home/c-tsunami/go-tsunami/proc/"
+	procDir = "./proc/"
 
 	shell = "#!/bin/bash"
 )
@@ -64,7 +64,7 @@ func (s scriptW) Create() (string, error) {
 func (s scriptW) Write(content string) error {
 	f := s.path + s.fileName
 	// open file using READ & WRITE & X permission
-	file, err := os.OpenFile(f, os.O_RDWR, 0644) //0666
+	file, err := os.OpenFile(f, os.O_RDWR, 0664) //0666
 	if err != nil {
 		log.Infof("can not open file, err= %v", err)
 
@@ -91,6 +91,46 @@ func (s scriptW) Write(content string) error {
 	}
 
 	return err
+}
+
+func (s scriptW) CreateAndWrite(content string) (string, error) {
+	f := s.path + s.fileName
+	// open file using READ & WRITE & X permission
+
+	// detect if file exists
+	if _, err := os.Stat(f); os.IsExist(err) {
+		return "", err
+	}
+
+	// create file if not exists
+
+	file, err := os.OpenFile(f, os.O_RDWR|os.O_CREATE, 0666) //0666
+	if err != nil {
+		log.Infof("can not create/open file, err= %v", err)
+
+		return "", err
+	}
+	defer file.Close()
+
+	// write some text to file
+	_, err = file.WriteString(s.shebang + "\n" + content)
+	if err != nil {
+		log.Infof("can not write on file, err= %v", err)
+		return "", err
+	}
+
+	// save changes
+	err = file.Sync()
+	if err != nil {
+		log.Infof("can not save content on file, err= %v", err)
+		return "", err
+	}
+
+	if err := s.SetPermission(file, 0756); err != nil {
+		return "", err
+	}
+
+	return s.fileName, err
 }
 
 func (s scriptW) SetPermission(file *os.File, perm os.FileMode) error {
