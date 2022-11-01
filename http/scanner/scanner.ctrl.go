@@ -42,9 +42,9 @@ func (s *Scanner) StartScan(c *gin.Context) {
 		return
 	}
 
-	args := s.psExec.MakeCmdLine(st, sr.Target)
+	//args := s.psExec.MakeCmdLineDyn(st, sr.Target)
 
-	output, err := s.psExec.RunScan(args...)
+	output, err := s.psExec.RunScan(st, sr.Target)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, map[string]any{
 			"error":   true,
@@ -57,7 +57,7 @@ func (s *Scanner) StartScan(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, map[string]string{
-		"output": output,
+		"id": output,
 	})
 	return
 }

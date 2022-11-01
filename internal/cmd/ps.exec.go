@@ -7,6 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"os/exec"
+	"strings"
 )
 
 type Proc struct {
@@ -21,7 +22,7 @@ type Proc struct {
 
 func NewProcessScan(v *viper.Viper) *Proc {
 	return &Proc{
-		cmdName:    "/usr/bin/java", //fmt.Sprintf("%v", v.GetString("cmd.tsunami."))
+		cmdName:    "java", //usr/bin/java
 		classpath:  "-cp",
 		psPath:     fmt.Sprintf("%v", v.GetString("cmd.tsunami.path")),
 		pluginPath: fmt.Sprintf("%v", v.GetString("cmd.tsunami.plugin")) + "/*",
@@ -36,7 +37,7 @@ func (p *Proc) getCMD() string {
 }
 
 func (p *Proc) getArgsBase() string {
-	return fmt.Sprintf("%s \"%s:%s\" com.google.tsunami.main.cli.TsunamiCli -Dtsunami-config.location=/home/c-tsunami/tsunami/tsunami.yaml", p.classpath, p.jarName, p.pluginPath)
+	return fmt.Sprintf("%s \"%s:%s\" com.google.tsunami.main.cli.TsunamiCli", p.classpath, p.jarName, p.pluginPath) //-Dtsunami-config.location=/home/c-tsunami/tsunami/tsunami.yaml
 }
 
 func (p *Proc) getOutputType() string {
@@ -63,52 +64,61 @@ func (p *Proc) ScanType(typeScan string) (string, error) {
 
 }
 
-func (p *Proc) MakeCmdLine(typeScan, target string) []string {
-	tgt := typeScan + "=" + target
-	output := ScanResOutputFormat + "=" + p.outputType
-	output += " " + ScanResOutputFilename + "=" + p.outputFile
-
-	var args = make([]string, 2, 4)
-	args = append(args, tgt, output)
-
-	return args
+func (p *Proc) scanTarget(typeScan, target string) string {
+	return typeScan + "=" + target
 }
 
-func (p *Proc) RunScan(cArgs ...string) (string, error) {
-	args := p.getArgsBase()
+// MakeCmdLineDynPt create dynamic part of the cmd tsunami
+func (p *Proc) makeCmdLineDynPt(cmd []string) string {
+	return strings.Join(cmd, " ")
+}
 
-	for _, v := range cArgs {
-		args += " " + v
+func (p *Proc) RunScan(typeScan, target string) (string, error) {
+
+	writer := NewScriptW()
+
+	fName, err := writer.Create()
+	if err != nil {
+		return "", err
 	}
-	log.Infof("%s", fmt.Sprintf(args))
-	//ps := exec.Command(p.getCMD(), args)
-	/*ps := exec.Command("java",
-		"-cp",
-		"\"/home/c-tsunami/tsunami/tsunami-main-0.0.15-SNAPSHOT-cli.jar:/home/c-tsunami/tsunami/plugins/*\"",
-		"com.google.tsunami.main.cli.TsunamiCli", //<-there is the prob
-		"--ip-v4-target=127.0.0.1",
-		"--scan-results-local-output-format=JSON",
-		"--scan-results-local-output-filename=/home/c-tsunami/tsunami/tsunami-output.json",
-	)*/
-	//ps := exec.Command("./script-tsunami.sh")
-	ps := exec.Command("java", "-cp \"/home/c-tsunami/tsunami/tsunami-main-0.0.15-SNAPSHOT-cli.jar:/home/c-tsunami/tsunami/plugins/*\" com.google.tsunami.main.cli.TsunamiCli --ip-v4-target=127.0.0.1 --scan-results-local-output-format=JSON --scan-results-local-output-filename=/home/c-tsunami/tsunami/tsunami-output.json")
+
+	var cmd = make([]string, 2, 4)
+
+	cmdName := p.cmdName
+	classpathArgs := p.getArgsBase()
+	targetArg := p.scanTarget(typeScan, target)
+	output := ScanResOutputFormat + "=" + p.outputType + " " + ScanResOutputFilename + "=" + p.outputFile + fName + ".json"
+
+	cmd = append(cmd, cmdName, classpathArgs, targetArg, output)
+
+	command := p.makeCmdLineDynPt(cmd)
+
+	if err := writer.Write(command); err != nil {
+		return "", err
+	}
+
+	ps := exec.Command("./proc/" + fName)
 
 	var out, er bytes.Buffer
 
 	ps.Stdout = &out
 	ps.Stderr = &er
 
-	err := ps.Run()
+	err = ps.Run()
 	//err := ps.Start()
 	if err != nil {
 
-		return "", errors.New(fmt.Sprintf(" process error, Stderr=%v, err=%v", er.String(), err))
+		return "", errors.New(fmt.Sprintf("process error, Stderr=%v, err=%v", er.String(), err))
 	}
+
+	ps.Wait()
+
+	writer.Delete()
 
 	//notify the interface with a websocket to preform get results of scan
 
 	log.Println(out.String())
 
-	return out.String(), nil
+	return fName, nil
 
 }
