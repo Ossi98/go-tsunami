@@ -84,11 +84,12 @@ func (s *Scanner) ReadScanFile(c *gin.Context) {
 	}
 
 	//split path
-	str := strings.Split(fmt.Sprintf("%v", s.viper.GetString("cmd.tsunami.path")), "/")
+	path:=fmt.Sprintf("%v", s.viper.GetString("cmd.tsunami.path")
+	//str := strings.Split(fmt.Sprintf("%v", s.viper.GetString("cmd.tsunami.path")), "/")
 
-	log.Info(str[0])
+	//log.Info(str[0])
 	// Open our jsonFile
-	echo := exec.Command("echo", str[0])
+	echo := exec.Command("echo", "$HOME")
 	var out, er bytes.Buffer
 
 	echo.Stdout = &out
@@ -107,7 +108,9 @@ func (s *Scanner) ReadScanFile(c *gin.Context) {
 	echo.Wait()
 	log.Println(out.String())
 
-	jsonFile, err := os.Open(out.String() + "/" + uri.Id + ".json")
+	str := strings.Split(out.String(),"\n")//strings.ReplaceAll()
+
+	jsonFile, err := os.Open(strings.ReplaceAll(path,"$HOME",str[0]) + "/" + uri.Id + ".json")
 	//jsonFile, err := os.OpenFile(fmt.Sprintf("%s%s.json", s.viper.GetString("cmd.tsunami.path"), uri.Id), os.O_RDWR, 0444)
 	// if we os.Open returns an error then handle it
 	if err != nil {
