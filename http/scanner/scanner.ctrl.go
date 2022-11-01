@@ -89,7 +89,7 @@ func (s *Scanner) ReadScanFile(c *gin.Context) {
 
 	//log.Info(str[0])
 	// Open our jsonFile
-	echo := exec.Command("echo", "$HOME")
+	echo := exec.Command("echo", "\"$HOME\"")
 	var out, er bytes.Buffer
 
 	echo.Stdout = &out
