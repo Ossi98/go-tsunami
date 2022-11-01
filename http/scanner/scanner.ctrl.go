@@ -3,6 +3,7 @@ package scanner
 import (
 	"Ossi98/go-tsunami/internal/cmd"
 	"Ossi98/go-tsunami/internal/utils/validator"
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -11,6 +12,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"os/exec"
+	"strings"
 )
 
 type Scanner struct {
@@ -80,8 +83,29 @@ func (s *Scanner) ReadScanFile(c *gin.Context) {
 		return
 	}
 
+	//split path
+	str := strings.Split(fmt.Sprintf("%v", s.viper.GetString("cmd.tsunami.path")), "/")
+
 	// Open our jsonFile
-	jsonFile, err := os.Open(s.viper.GetString("cmd.tsunami.path") + uri.Id + ".json")
+	echo := exec.Command("echo", str[0])
+	var out, er bytes.Buffer
+
+	echo.Stdout = &out
+	echo.Stderr = &er
+
+	err := echo.Run()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, map[string]any{
+			"error":   true,
+			"status":  500,
+			"message": fmt.Sprintf("%v", err),
+		})
+		log.Errorf("process error, Stderr=%v, err=%v", er.String(), err)
+	}
+
+	echo.Wait()
+
+	jsonFile, err := os.Open(out.String() + "/" + uri.Id + ".json")
 	//jsonFile, err := os.OpenFile(fmt.Sprintf("%s%s.json", s.viper.GetString("cmd.tsunami.path"), uri.Id), os.O_RDWR, 0444)
 	// if we os.Open returns an error then handle it
 	if err != nil {
