@@ -12,7 +12,7 @@ const (
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	length = 10
 
-	procDir = "proc/"
+	procDir = "./proc/"
 
 	shell = "#!/bin/bash"
 )
@@ -64,7 +64,7 @@ func (s scriptW) Create() (string, error) {
 func (s scriptW) Write(content string) error {
 	f := s.path + s.fileName
 	// open file using READ & WRITE & X permission
-	file, err := os.OpenFile(f, os.O_RDWR, 0754) //0666
+	file, err := os.OpenFile(f, os.O_RDWR, 0644) //0666
 	if err != nil {
 		log.Infof("can not open file, err= %v", err)
 
