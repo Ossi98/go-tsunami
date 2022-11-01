@@ -7,7 +7,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"math/rand"
-	"os"
 	"os/exec"
 	"strings"
 	"time"
@@ -104,7 +103,9 @@ func (p *Proc) RunScan(typeScan, target string) (string, error) {
 		tmpFileName[i] = charset[seededRand.Intn(len(charset))]
 	}
 
-	output := ScanResOutputFormat + "=" + p.outputType + " " + ScanResOutputFilename + "=" + p.outputFile + string(tmpFileName) + ".json"
+	id := string(tmpFileName)
+
+	output := ScanResOutputFormat + "=" + p.outputType + " " + ScanResOutputFilename + "=" + p.outputFile + id + ".json"
 
 	cmd = append(cmd, cmdName, classpathArgs, targetArg, output)
 
@@ -115,7 +116,7 @@ func (p *Proc) RunScan(typeScan, target string) (string, error) {
 		return "", err
 	}
 
-	id := fName
+	//id := fName
 	/*if err := writer.Write(command); err != nil {
 		return "", err
 	}*/
@@ -140,10 +141,10 @@ func (p *Proc) RunScan(typeScan, target string) (string, error) {
 
 	//rename result scan.json to file tle fname
 
-	if err := os.Rename(p.outputFile+string(tmpFileName), p.outputFile+fName+".json"); err != nil {
+	/*if err := os.Rename(p.outputFile+string(tmpFileName), p.outputFile+fName+".json"); err != nil {
 		log.Infof("can not rename file, err=%v", err)
 		id = string(tmpFileName)
-	}
+	}*/
 
 	log.Println(out.String())
 
