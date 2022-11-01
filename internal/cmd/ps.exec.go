@@ -83,11 +83,6 @@ func (p *Proc) RunScan(typeScan, target string) (string, error) {
 
 	writer := NewScriptW()
 
-	/*fName, err := writer.Create()
-	if err != nil {
-		return "", err
-	}*/
-
 	var cmd = make([]string, 2, 4)
 
 	cmdName := p.cmdName
@@ -116,11 +111,6 @@ func (p *Proc) RunScan(typeScan, target string) (string, error) {
 		return "", err
 	}
 
-	//id := fName
-	/*if err := writer.Write(command); err != nil {
-		return "", err
-	}*/
-
 	ps := exec.Command("./proc/" + fName)
 
 	var out, er bytes.Buffer
@@ -131,20 +121,12 @@ func (p *Proc) RunScan(typeScan, target string) (string, error) {
 	err = ps.Run()
 	//err := ps.Start()
 	if err != nil {
-
 		return "", errors.New(fmt.Sprintf("process error, Stderr=%v, err=%v", er.String(), err))
 	}
 
 	ps.Wait()
 
 	writer.Delete()
-
-	//rename result scan.json to file tle fname
-
-	/*if err := os.Rename(p.outputFile+string(tmpFileName), p.outputFile+fName+".json"); err != nil {
-		log.Infof("can not rename file, err=%v", err)
-		id = string(tmpFileName)
-	}*/
 
 	log.Println(out.String())
 
