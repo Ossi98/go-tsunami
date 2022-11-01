@@ -46,7 +46,7 @@ func NewScriptW() *scriptW {
 func (s scriptW) Create() (string, error) {
 	f := s.path + s.fileName
 	// detect if file exists
-	fileInfo, err := os.Stat(f)
+	_, err := os.Stat(f)
 
 	// create file if not exists
 	if os.IsNotExist(err) {
@@ -58,7 +58,7 @@ func (s scriptW) Create() (string, error) {
 		}
 		defer file.Close()
 	}
-	return fileInfo.Name(), err
+	return s.fileName /*fileInfo.Name()*/, err
 }
 
 func (s scriptW) Write(content string) error {
