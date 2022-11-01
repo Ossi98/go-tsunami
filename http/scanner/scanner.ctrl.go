@@ -82,8 +82,7 @@ func (s *Scanner) ReadScanFile(c *gin.Context) {
 
 	// Open our jsonFile
 	//jsonFile, err := os.Open(viper.GetString("cmd.tsunami.path") + uri.Id + ".json")
-	jsonFile, err := os.OpenFile(fmt.Sprintf("%s%s.json", viper.GetString("cmd.tsunami.path"), uri.Id), os.O_RDWR, 0666)
-
+	jsonFile, err := os.OpenFile(fmt.Sprintf("%s%s.json", s.viper.GetString("cmd.tsunami.path"), uri.Id), os.O_RDWR, 0444)
 	// if we os.Open returns an error then handle it
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, map[string]any{
