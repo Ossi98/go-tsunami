@@ -85,11 +85,10 @@ func (s *Scanner) ReadScanFile(c *gin.Context) {
 
 	//split path
 	path := fmt.Sprintf("%v", s.viper.GetString("cmd.tsunami.path"))
-	//str := strings.Split(fmt.Sprintf("%v", s.viper.GetString("cmd.tsunami.path")), "/")
+	str := strings.Split(fmt.Sprintf("%v", s.viper.GetString("cmd.tsunami.path")), "/")
 
-	//log.Info(str[0])
 	// Open our jsonFile
-	echo := exec.Command("bash", "-c", "echo $HOME")
+	echo := exec.Command("bash", "-c", fmt.Sprintf("echo %s", str[0]))
 	var out, er bytes.Buffer
 
 	echo.Stdout = &out
@@ -109,10 +108,10 @@ func (s *Scanner) ReadScanFile(c *gin.Context) {
 	echo.Wait()
 	log.Println(out.String())
 
-	str := strings.Split(out.String(), "\n") //strings.ReplaceAll()
+	strOut := strings.Split(out.String(), "\n") //strings.ReplaceAll()
 
-	jsonFile, err := os.Open(strings.ReplaceAll(path, "$HOME", str[0]) + "/" + uri.Id + ".json")
-	//jsonFile, err := os.OpenFile(fmt.Sprintf("%s%s.json", s.viper.GetString("cmd.tsunami.path"), uri.Id), os.O_RDWR, 0444)
+	jsonFile, err := os.Open(strings.ReplaceAll(path, str[0], strOut[0]) + "/" + uri.Id + ".json")
+
 	// if we os.Open returns an error then handle it
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, map[string]any{
@@ -137,8 +136,6 @@ func (s *Scanner) ReadScanFile(c *gin.Context) {
 	fmt.Println(result)
 
 	c.Data(http.StatusOK, "application/json", byteValue)
-	/*c.JSON(http.StatusOK, map[string]string{
-		"id": uri.Id,
-	})*/
+
 	return
 }
