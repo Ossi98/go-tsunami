@@ -50,7 +50,7 @@ func (s scriptW) Create() (string, error) {
 
 	// create file if not exists
 	if os.IsNotExist(err) {
-		var file, err = os.Create(f)
+		var file, err = os.OpenFile(f, os.O_CREATE, 0666)
 		if err != nil {
 			log.Infof("can not create file, err= %v", err)
 			//os.Exit(0)

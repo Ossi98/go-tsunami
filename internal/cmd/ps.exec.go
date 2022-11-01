@@ -81,28 +81,28 @@ func (p *Proc) RunScan(typeScan, target string) (string, error) {
 
 	writer := NewScriptW()
 
-	/*fName, err := writer.Create()
+	fName, err := writer.Create()
 	if err != nil {
 		return "", err
-	}*/
+	}
 
 	var cmd = make([]string, 2, 4)
 
 	cmdName := p.cmdName
 	classpathArgs := p.getArgsBase()
 	targetArg := p.scanTarget(typeScan, target)
-	output := ScanResOutputFormat + "=" + p.outputType + " " + ScanResOutputFilename + "=" + p.outputFile //+ fName + ".json"
+	output := ScanResOutputFormat + "=" + p.outputType + " " + ScanResOutputFilename + "=" + p.outputFile + fName + ".json"
 
 	cmd = append(cmd, cmdName, classpathArgs, targetArg, output)
 
 	command := p.makeCmdLineDynPt(cmd)
-	fName, err := writer.CreateAndWrite(command) //fName, err := writer.Create()
+	/*fName, err := writer.CreateAndWrite(command) //fName, err := writer.Create()
 	if err != nil {
 		return "", err
-	}
-	/*if err := writer.Write(command); err != nil {
-		return "", err
 	}*/
+	if err := writer.Write(command); err != nil {
+		return "", err
+	}
 
 	ps := exec.Command("./proc/" + fName)
 
