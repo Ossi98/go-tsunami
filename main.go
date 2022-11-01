@@ -3,6 +3,8 @@ package main
 import (
 	"Ossi98/go-tsunami/http"
 	"Ossi98/go-tsunami/http/health"
+	"Ossi98/go-tsunami/http/scanner"
+	"Ossi98/go-tsunami/internal/cmd"
 	"Ossi98/go-tsunami/internal/config"
 	"Ossi98/go-tsunami/internal/utils/logger"
 	"fmt"
@@ -22,8 +24,6 @@ func main() {
 
 	// Viper Config
 	c := config.NewConfig(env)
-
-	//log.Info(fmt.Sprintf("%v", c.GetStringMap("api")["port"]))
 
 	// Gin Engine and Config
 	var e *gin.Engine
@@ -49,7 +49,7 @@ func main() {
 		e = gin.Default()
 	}
 
-	// If use of a middleware
+	// use of a middleware
 	//e.Use(middleware)
 
 	// Block reverse proxy process
@@ -68,13 +68,19 @@ func main() {
 }
 
 func routes(e *gin.Engine, c *viper.Viper) {
+	//services
+	ps := cmd.NewProcessScan(c)
+
 	// Controller
 	hc := health.NewHealthCtrl()
+	sc := scanner.NewScannerCtrl(ps, c)
 
 	// Router
 	router := http.NewRouter(e, c)
 
 	//Routes
 	router.GET("/health", hc.Index)
+	router.POST("/scanner/start", sc.StartScan)
+	router.GET("/scanner/:id", sc.ReadScanFile)
 
 }
