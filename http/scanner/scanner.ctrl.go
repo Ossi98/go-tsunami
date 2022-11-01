@@ -4,7 +4,6 @@ import (
 	"Ossi98/go-tsunami/internal/cmd"
 	"Ossi98/go-tsunami/internal/utils/validator"
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
@@ -50,8 +49,6 @@ func (s *Scanner) StartScan(c *gin.Context) {
 		log.Errorf("can not exec scan, err= %v", err)
 		return
 	}
-
-	//args := s.psExec.MakeCmdLineDyn(st, sr.Target)
 
 	output, err := s.psExec.RunScan(st, sr.Target)
 	if err != nil {
@@ -108,7 +105,7 @@ func (s *Scanner) ReadScanFile(c *gin.Context) {
 	echo.Wait()
 	log.Println(out.String())
 
-	strOut := strings.Split(out.String(), "\n") //strings.ReplaceAll()
+	strOut := strings.Split(out.String(), "\n")
 
 	jsonFile, err := os.Open(strings.ReplaceAll(path, str[0], strOut[0]) + "/" + uri.Id + ".json")
 
@@ -130,10 +127,10 @@ func (s *Scanner) ReadScanFile(c *gin.Context) {
 
 	byteValue, _ := ioutil.ReadAll(jsonFile)
 
-	var result map[string]interface{}
+	/*var result map[string]interface{}
 	json.Unmarshal(byteValue, &result)
 
-	fmt.Println(result)
+	fmt.Println(result)*/
 
 	c.Data(http.StatusOK, "application/json", byteValue)
 

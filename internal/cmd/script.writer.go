@@ -21,7 +21,6 @@ type scriptW struct {
 	fileName string
 	path     string
 	shebang  string
-	//command  string
 }
 
 func NewScriptW() *scriptW {
@@ -39,7 +38,6 @@ func NewScriptW() *scriptW {
 		fileName: string(b),
 		path:     procDir,
 		shebang:  shell,
-		//command:  cmd,
 	}
 }
 
@@ -58,7 +56,7 @@ func (s scriptW) Create() (string, error) {
 		}
 		defer file.Close()
 	}
-	return s.fileName /*fileInfo.Name()*/, err
+	return s.fileName, err
 }
 
 func (s scriptW) Write(content string) error {
@@ -95,7 +93,7 @@ func (s scriptW) Write(content string) error {
 
 func (s scriptW) CreateAndWrite(content string) (string, error) {
 	f := s.path + s.fileName
-	// open file using READ & WRITE & X permission
+	// open file using READ & WRITE permission
 
 	// detect if file exists
 	if _, err := os.Stat(f); os.IsExist(err) {
@@ -103,7 +101,6 @@ func (s scriptW) CreateAndWrite(content string) (string, error) {
 	}
 
 	// create file if not exists
-
 	file, err := os.OpenFile(f, os.O_RDWR|os.O_CREATE, 0666) //0666
 	if err != nil {
 		log.Infof("can not create/open file, err= %v", err)

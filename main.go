@@ -49,7 +49,7 @@ func main() {
 		e = gin.Default()
 	}
 
-	// If use of a middleware
+	// use of a middleware
 	//e.Use(middleware)
 
 	// Block reverse proxy process
