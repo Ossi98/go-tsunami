@@ -6,8 +6,11 @@ import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"math/rand"
+	"os"
 	"os/exec"
 	"strings"
+	"time"
 )
 
 type Proc struct {
@@ -81,28 +84,41 @@ func (p *Proc) RunScan(typeScan, target string) (string, error) {
 
 	writer := NewScriptW()
 
-	fName, err := writer.Create()
+	/*fName, err := writer.Create()
 	if err != nil {
 		return "", err
-	}
+	}*/
 
 	var cmd = make([]string, 2, 4)
 
 	cmdName := p.cmdName
 	classpathArgs := p.getArgsBase()
 	targetArg := p.scanTarget(typeScan, target)
-	output := ScanResOutputFormat + "=" + p.outputType + " " + ScanResOutputFilename + "=" + p.outputFile + fName + ".json"
+
+	var seededRand *rand.Rand = rand.New(
+		rand.NewSource(time.Now().UnixNano()))
+
+	tmpFileName := make([]byte, length)
+
+	for i := range tmpFileName {
+		tmpFileName[i] = charset[seededRand.Intn(len(charset))]
+	}
+
+	output := ScanResOutputFormat + "=" + p.outputType + " " + ScanResOutputFilename + "=" + p.outputFile + string(tmpFileName) + ".json"
 
 	cmd = append(cmd, cmdName, classpathArgs, targetArg, output)
 
 	command := p.makeCmdLineDynPt(cmd)
-	/*fName, err := writer.CreateAndWrite(command) //fName, err := writer.Create()
+
+	fName, err := writer.CreateAndWrite(command) //fName, err := writer.Create()
 	if err != nil {
 		return "", err
-	}*/
-	if err := writer.Write(command); err != nil {
-		return "", err
 	}
+
+	id := fName
+	/*if err := writer.Write(command); err != nil {
+		return "", err
+	}*/
 
 	ps := exec.Command("./proc/" + fName)
 
@@ -122,10 +138,15 @@ func (p *Proc) RunScan(typeScan, target string) (string, error) {
 
 	writer.Delete()
 
-	//notify the interface with a websocket to preform get results of scan
+	//rename result scan.json to file tle fname
+
+	if err := os.Rename(p.outputFile+string(tmpFileName), p.outputFile+fName+".json"); err != nil {
+		log.Infof("can not rename file, err=%v", err)
+		id = string(tmpFileName)
+	}
 
 	log.Println(out.String())
 
-	return fName, nil
+	return id, nil
 
 }

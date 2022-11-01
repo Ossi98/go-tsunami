@@ -12,7 +12,7 @@ const (
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	length = 10
 
-	procDir = "/home/c-tsunami/go-tsunami/proc/"
+	procDir = "./proc/"
 
 	shell = "#!/bin/bash"
 )
