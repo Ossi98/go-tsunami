@@ -86,6 +86,7 @@ func (s *Scanner) ReadScanFile(c *gin.Context) {
 	//split path
 	str := strings.Split(fmt.Sprintf("%v", s.viper.GetString("cmd.tsunami.path")), "/")
 
+	log.Info(str[0])
 	// Open our jsonFile
 	echo := exec.Command("echo", str[0])
 	var out, er bytes.Buffer
@@ -104,6 +105,7 @@ func (s *Scanner) ReadScanFile(c *gin.Context) {
 	}
 
 	echo.Wait()
+	log.Println(out.String())
 
 	jsonFile, err := os.Open(out.String() + "/" + uri.Id + ".json")
 	//jsonFile, err := os.OpenFile(fmt.Sprintf("%s%s.json", s.viper.GetString("cmd.tsunami.path"), uri.Id), os.O_RDWR, 0444)
