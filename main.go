@@ -53,10 +53,10 @@ func main() {
 	//e.Use(middleware)
 
 	// Block reverse proxy process
-	err := e.SetTrustedProxies([]string{"127.0.0.1"})
+	/*err := e.SetTrustedProxies([]string{"127.0.0.1"})
 	if err != nil {
 		return
-	}
+	}*/
 
 	// Init Controllers and Router
 	routes(e, c)
