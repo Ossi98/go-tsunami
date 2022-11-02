@@ -8,6 +8,7 @@ import (
 	"Ossi98/go-tsunami/internal/config"
 	"Ossi98/go-tsunami/internal/utils/logger"
 	"fmt"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -49,14 +50,14 @@ func main() {
 		e = gin.Default()
 	}
 
-	// use of a middleware
-	//e.Use(middleware)
+	// use of a middleware to allow all origins
+	e.Use(cors.Default())
 
 	// Block reverse proxy process
-	/*err := e.SetTrustedProxies([]string{"127.0.0.1"})
+	err := e.SetTrustedProxies([]string{"127.0.0.1"})
 	if err != nil {
 		return
-	}*/
+	}
 
 	// Init Controllers and Router
 	routes(e, c)
