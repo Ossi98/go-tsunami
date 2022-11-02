@@ -39,6 +39,8 @@ func (s *Scanner) StartScan(c *gin.Context) {
 		validator.HttpValidationError(c, err)
 	}
 
+	log.Infof("%v", sr)
+
 	st, err := s.psExec.ScanType(sr.TypeTarget)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, map[string]any{
